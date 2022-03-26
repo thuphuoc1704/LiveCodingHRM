@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<suite  name="Suite" >
+	<listeners>
+	 	<listener class-name="reportconfig.ReportNGListener"/>
+        <listener class-name="org.uncommons.reportng.HTMLReporter"/>
+        <listener class-name="org.uncommons.reportng.JUnitXMLReporter"/>
+        <listener class-name="common.MethodListener"/>
+	</listeners>
+	
+   <test name="Run Chrome">
+   	<parameter name="browser" value="chrome"/>
+   		<classes>
+      		 <class name="com.hrm.admin.LiveHRM"/>
+    	</classes>
+  </test>
+</suite>
