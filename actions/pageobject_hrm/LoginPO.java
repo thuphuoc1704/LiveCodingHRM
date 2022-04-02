@@ -1,4 +1,4 @@
-package pageobject;
+package pageobject_hrm;
 
 import org.openqa.selenium.WebDriver;
 import common.PageBase;

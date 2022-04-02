@@ -12,8 +12,8 @@ import org.openqa.selenium.firefox.FirefoxDriver;
 import org.testng.Assert;
 import org.testng.Reporter;
 import io.github.bonigarcia.wdm.WebDriverManager;
-import pageobject.GeneratorManager;
-import pageobject.LoginPO;
+import pageobject_hrm.GeneratorManager;
+import pageobject_hrm.LoginPO;
 
 public class PageTest {
 	protected final Log log;

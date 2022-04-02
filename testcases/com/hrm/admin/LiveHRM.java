@@ -1,13 +1,15 @@
 package com.hrm.admin;
 import org.testng.annotations.Test;
+
+import com.github.javafaker.Faker;
 import com.hrm.pagebaseUI.PageBaseUI;
 import common.PageTest;
-import pageobject.AddEmployeePO;
-import pageobject.DashBoardPO;
-import pageobject.EmployeeDetailPO;
-import pageobject.EmployeeListPO;
-import pageobject.GeneratorManager;
-import pageobject.LoginPO;
+import pageobject_hrm.AddEmployeePO;
+import pageobject_hrm.DashBoardPO;
+import pageobject_hrm.EmployeeDetailPO;
+import pageobject_hrm.EmployeeListPO;
+import pageobject_hrm.GeneratorManager;
+import pageobject_hrm.LoginPO;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Parameters;
 import org.openqa.selenium.WebDriver;
@@ -16,27 +18,23 @@ import org.testng.annotations.AfterClass;
 public class LiveHRM extends PageTest {
 	private WebDriver driver;
 	String avatarFilePath=PageBaseUI.UPLOAD_FOLDER_PATH +"image.jpg";
-	private String username, password,firstName,lastName,userNameEmp, passwordEmp, 
-	confPasswordEmp,idEmployee, firsnameEdit, lastnameEdit, nickName;
+	private String username, password,firstName,lastName, passwordEmp,idEmployee, nickName;
 	
 	@Parameters("browser")
 	@BeforeClass
 	public void beforeClass(String browserName) {
+		Faker fakeData= new Faker();
+		firstName=fakeData.address().firstName();
+		lastName=fakeData.address().lastName();
+		passwordEmp=fakeData.internet().password();
+		lastName=fakeData.address().lastName();
 		username = "Admin";
 		password = "admin123";
-		userNameEmp = "auto"+ getRandomNumber();
-		passwordEmp = "Auto123456@";
-		confPasswordEmp = "Auto123456@";
-		firstName= "auto";
-	    lastName= "test";
-	    firsnameEdit="edit"+firstName;
-	    lastnameEdit="edit"+lastName;
 	    nickName="pikachu";
 		driver = getBrowserDriver(browserName);
 		maximizeWindown(driver);
 		settimeOutImplicitWait(driver, 30);
 		driver.get(PageBaseUI.URL_HRM);
-
 	}
 
 	@Test
@@ -66,20 +64,20 @@ public class LiveHRM extends PageTest {
 		addemployeePage.senkeyToElementDynamicByID(driver, lastName, "lastName");
 		
 		log.info("AddEmployee_Step07: get employeeId");
-	    idEmployee=addemployeePage.getElementAtributeDynamic(driver, "value","employeeId");
+	    idEmployee=addemployeePage.getElementAtributeTextBoxByIdDynamic(driver, "value","employeeId");
 	    System.out.println("EmployeeID:"+idEmployee);
 		
 		log.info("AddEmployee_Step08: check in box login detail");
 		addemployeePage.CheckBoxDynamicByName(driver, "chkLogin", "Create Login Details");
 		
-		log.info("AddEmployee_Step09: input username field: "+userNameEmp);
-		addemployeePage.senkeyToElementDynamicByID(driver, userNameEmp, "user_name");
+		log.info("AddEmployee_Step09: input username field: "+lastName);
+		addemployeePage.senkeyToElementDynamicByID(driver, lastName, "user_name");
 		
 		log.info("AddEmployee_Step10: input password field: "+passwordEmp);
 		addemployeePage.senkeyToElementDynamicByID(driver, passwordEmp, "user_password");
 		
-		log.info("AddEmployee_Step11: input confPassword field: "+confPasswordEmp);
-		addemployeePage.senkeyToElementDynamicByID(driver, confPasswordEmp, "re_password");
+		log.info("AddEmployee_Step11: input confPassword field: "+passwordEmp);
+		addemployeePage.senkeyToElementDynamicByID(driver, passwordEmp, "re_password");
 		
 		log.info("AddEmployee_Step12: select enable in dropdownlist field: ");
 		addemployeePage.selectItemDefaultDropdownDynamic(driver,"Enabled","status");
@@ -88,7 +86,19 @@ public class LiveHRM extends PageTest {
 		addemployeePage.clickToButtonDynamicByValue(driver, "Save");
 	}
 	@Test
-	public void TC03_SearchEmployee() {
+	public void TC03_SortLastNameEmployee() {
+		employeeDetailPage=GeneratorManager.getEmployeeDetailPage(driver);
+		employeeDetailPage.clickToMenu(driver,"PIM");
+		employeeDetailPage.clickToSubMenu(driver,"Employee List");
+		employeeListPage=GeneratorManager.getEmployeeListPage(driver);
+		employeeListPage.clickToMenu(driver, "Last Name");
+		threadSecond(3);
+		verifyTrue(employeeListPage.isSortDescending(driver, "resultTable", "Last Name"));
+		threadSecond(3);
+	}
+	
+//	@Test
+	public void TC04_SearchEmployee() {
 		log.info("SearchEmployee_Step01: open detail employee");
 		employeeDetailPage=GeneratorManager.getEmployeeDetailPage(driver);
 		
@@ -115,10 +125,12 @@ public class LiveHRM extends PageTest {
 		verifyTrue(employeeListPage.isJQueryAndJSLoadedSuccess(driver));
 		
 		log.info("SearchEmployee_Step08: Verify result from search");
-		verifyEquals(employeeListPage.getValueInTableAtRowAndColumn(driver,"resultTable","Id","1"), idEmployee);
+		String value=employeeListPage.getValueInTableAtRowAndColumn(driver,"resultTable","Last Name","1");
+		System.out.println("value"+ value);
+		verifyEquals(value, lastName);
 	}
-	@Test
-	public void TC04_Logout() {
+//	@Test
+	public void TC05_Logout() {
 		employeeDetailPage=GeneratorManager.getEmployeeDetailPage(driver);
 		verifyTrue(employeeDetailPage.isJQueryAndJSLoadedSuccess(driver));
 		
@@ -129,13 +141,13 @@ public class LiveHRM extends PageTest {
 		employeeDetailPage.clickToMenu(driver, "Logout");	
 	}
 	
-	@Test
+//	@Test
 	public void TC05_LoginByUser() {
 		loginPage=GeneratorManager.getLoginPage(driver);
 		log.info("LoginByUse_Step01: login to system by user");
-		dashboardPage=loginPage.LoginToSystem(driver, userNameEmp, passwordEmp);
+		dashboardPage=loginPage.LoginToSystem(driver, lastName, passwordEmp);
 	}
-	@Test
+//	@Test
 	public void TC06_UploadAvatar() {
 		log.info("UploadAvatar_Step01: click My Infor link");
 		dashboardPage.clickToMenu(driver, "My Info");
@@ -156,7 +168,7 @@ public class LiveHRM extends PageTest {
 		log.info("UploadAvatar_Step06: verify image upload successfull");
 		verifyTrue(employeeDetailPage.isImageUploadSuccess(driver));
 	}
-	@Test
+//	@Test
 	public void TC07_EditEmployee() {
 		log.info("EditEmployee_Step01: Click to My Infor");
 		employeeDetailPage.clickSideBarInMyInForPageByText(driver, "Personal Details");
@@ -168,14 +180,14 @@ public class LiveHRM extends PageTest {
 		verifyFalse(employeeDetailPage.isEnableTextboxInMyInForPage(driver, "personal_txtLicExpDate"));
 		
 		log.info("EditEmployee_Step03: Click to Edit button");
-		verifyTrue(employeeDetailPage.isImageUploadSuccess(driver));
+		employeeDetailPage.isJQueryAndJSLoadedSuccess(driver);
 		employeeDetailPage.clickToButtonByIdFormAndByValueButton(driver, "frmEmpPersonalDetails", "Edit");
 		
 		log.info("EditEmployee_Step04: Edit firstname field");
-		employeeDetailPage.senkeyToElementDynamicByID(driver, firsnameEdit, "personal_txtEmpFirstName");
+		employeeDetailPage.senkeyToElementDynamicByID(driver, firstName, "personal_txtEmpFirstName");
 		
 		log.info("EditEmployee_Step05: Edit lastname field");
-		employeeDetailPage.senkeyToElementDynamicByID(driver, lastnameEdit, "personal_txtEmpLastName");
+		employeeDetailPage.senkeyToElementDynamicByID(driver, lastName, "personal_txtEmpLastName");
 		
 		
 		log.info("EditEmployee_Step06: Input nickname field");
@@ -187,22 +199,28 @@ public class LiveHRM extends PageTest {
 		log.info("EditEmployee_Step08: Verify message upload successfull");
 		verifyTrue(employeeDetailPage.isMessageUploadSuccess(driver));
 	}
-	@Test
+//	@Test
 	public void TC08_ContactDetail() {
+		log.info("UploadAvatar_Step01: click My Infor link");
+		dashboardPage.clickToMenu(driver, "My Info");
+		GeneratorManager.getEmployeeDetailPage(driver);
+		
 		log.info("ContactDetail_Step01: Click to Contact Detail");
 		employeeDetailPage.clickSideBarInMyInForPageByText(driver, "Contact Details");
 		
 		log.info("ContactDetail_Step02: Click to Edit button");
 		verifyTrue(employeeDetailPage.isJQueryAndJSLoadedSuccess(driver));
 		employeeDetailPage.clickToButtonByIdFormAndByValueButton(driver, "frmEmpContactDetails", "Edit");
-	
+		
 		log.info("ContactDetail_Step03: Select 'Viet Nam' country");
-		employeeDetailPage.selectItemDefaultDropdownDynamic(driver, "American Samoa", "contact_country");
+		employeeDetailPage.selectItemDefaultDropdownDynamic(driver, "Viet Nam","contact_country");
+		employeeDetailPage.clickToButtonDynamicByValue(driver, "Save");
 		verifyTrue(employeeDetailPage.isMessageUploadSuccess(driver));
+
 	}
 	@AfterClass
 	public void afterClass() {
-		driver.quit();
+//		driver.quit();
 	}
 
 	LoginPO loginPage;

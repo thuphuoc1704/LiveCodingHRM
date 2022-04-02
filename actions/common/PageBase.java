@@ -1,5 +1,7 @@
 package common;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import org.openqa.selenium.Alert;
@@ -8,19 +10,16 @@ import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
-import org.openqa.selenium.remote.server.handler.GetElementAttribute;
-import org.openqa.selenium.remote.server.handler.GetElementSize;
 import org.openqa.selenium.support.Color;
 import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.WebDriverWait;
-
-import com.hrm.UserPageUI.employeeDetailUI;
 import com.hrm.pagebaseUI.PageBaseUI;
+import com.nopcommerce.pagebaseUI.ProductPageUI;
 
-import pageobject.DashBoardPO;
-import pageobject.GeneratorManager;
+import pageobject_hrm.DashBoardPO;
+import pageobject_hrm.GeneratorManager;
 
 public class PageBase {
 	
@@ -110,7 +109,7 @@ public class PageBase {
 		driver.switchTo().window(parentID);
 	}
 
-	public By getLocator(String locator) {
+	public By getLocator(String locator) {  
 		By by = null;
 		if (locator.startsWith("id=")) {
 			by = by.id(locator.substring(3));
@@ -133,15 +132,13 @@ public class PageBase {
 		return driver.findElement(getLocator(locator));
 	}
 	
-	public String getElement(String variableLocator, String... dynamicValues) {
+	public WebElement getElementDynamic(WebDriver driver, String locator, String ...dynamicLocator) {
+		locator=getLocatorDynamic(locator, dynamicLocator);
+		return driver.findElement(getLocator(locator));
+	}
+	public String getLocatorDynamic(String variableLocator, String... dynamicValues) {
 		if (variableLocator.startsWith("xpath=")) {
 			variableLocator = String.format(variableLocator, (Object[]) dynamicValues);
-		}
-		return variableLocator;
-	}
-	public String getElement(String variableLocator, String dynamicValues1, String dynamicValues2) {
-		if (variableLocator.startsWith("xpath=")) {
-			variableLocator = String.format(variableLocator,dynamicValues1,dynamicValues2);
 		}
 		return variableLocator;
 	}
@@ -149,8 +146,8 @@ public class PageBase {
 	public String getElementAtribute(WebDriver driver, String locator, String nameAttribute) {
 		return getElement(driver, locator).getAttribute(nameAttribute);
 	}
-	public String getElementAtributeDynamic(WebDriver driver, String nameAttribute, String dynamicLocator) {
-		return getElement(driver, getElement(PageBaseUI.TEXTBOX_BY_ID, dynamicLocator)).getAttribute(nameAttribute);
+	public String getElementAtributeTextBoxByIdDynamic(WebDriver driver, String nameAttribute, String ...dynamicLocator) {
+		return getElementDynamic(driver, PageBaseUI.TEXTBOX_BY_ID, dynamicLocator).getAttribute(nameAttribute);
 	}
 	public String getElementValueCss(WebDriver driver, String locator, String propertyName) {
 		return getElement(driver, locator).getCssValue(propertyName);
@@ -160,16 +157,26 @@ public class PageBase {
 		return Color.fromString(rgbaValue).asHex();
 	}
 
+
 	public List<WebElement> getListElement(WebDriver driver, String locator) {
-		return driver.findElements(By.xpath(locator));
+		return driver.findElements(getLocator(locator));
 	}
+
+	private List<WebElement> getListElementDynamic(WebDriver driver, String locator) {
+		return driver.findElements(getLocator(locator));
+	}
+
 	
+	public List<WebElement> getListElementDynamic(WebDriver driver, String locator, String ...dynamicLocator) {
+		return driver.findElements(getLocator(getLocatorDynamic(locator, dynamicLocator)));
+	}
 	public int getElementSize(WebDriver driver, String locator) {
 		return getListElement(driver, locator).size();
 	}
-	private int getElementSizeDynamic(WebDriver driver, String locator, String ...dynamicLocator) {
-		locator=getElement(locator, dynamicLocator);
-		return getListElement(driver, locator).size();
+	private int getElementSizeDynamic(WebDriver driver, String locator, String... dynamicLocator) {
+		locator=getLocatorDynamic(locator, dynamicLocator);
+		return getListElementDynamic(driver, locator).size();//cai UI xpath dau để a coi
+		//e lm a k biet dau ra dua loạn màn hing
 	}
 
 	public void clickToElement(WebDriver driver, String locator) {
@@ -177,27 +184,27 @@ public class PageBase {
 	}
 	public void clickToButtonDynamicByValue(WebDriver driver, String ...dynamicLocator) {
 		waitForELementVisible(driver, PageBaseUI.BUTTON_BY_VALUE, dynamicLocator);
-		getElement(driver, getElement(PageBaseUI.BUTTON_BY_VALUE, dynamicLocator)).click();
+		getElement(driver, getLocatorDynamic(PageBaseUI.BUTTON_BY_VALUE, dynamicLocator)).click();
 	}
 	public void clickToButtonByIdFormAndByValueButton(WebDriver driver, String idForm, String valueButton) {
 		waitForELementVisible(driver, PageBaseUI.BUTTON_BY_ID_FORM_AND_BY_ID_VALUEBUTTON, idForm, valueButton);
-		getElement(driver, getElement(PageBaseUI.BUTTON_BY_ID_FORM_AND_BY_ID_VALUEBUTTON, idForm, valueButton)).click();
+		getElement(driver, getLocatorDynamic(PageBaseUI.BUTTON_BY_ID_FORM_AND_BY_ID_VALUEBUTTON, idForm, valueButton)).click();
 	}
 	public void clickToMenu(WebDriver driver, String menu) {
 		waitForClickToElement(driver, PageBaseUI.LINK_HEADER_BY_TEXT, menu);
-		getElement(driver,getElement(PageBaseUI.LINK_HEADER_BY_TEXT, menu)).click();	
+		getElement(driver,getLocatorDynamic(PageBaseUI.LINK_HEADER_BY_TEXT, menu)).click();	
 	}
 	public void clickToLink(WebDriver driver, String dynamicLocator) {
 		waitForClickToElement(driver, PageBaseUI.LINK_BY_ID, dynamicLocator);
-		getElement(driver,getElement(PageBaseUI.LINK_BY_ID, dynamicLocator)).click();	
+		getElement(driver,getLocatorDynamic(PageBaseUI.LINK_BY_ID, dynamicLocator)).click();	
 	}
 	public void clickToSubMenu(WebDriver driver, String subMenu) {
 		waitForClickToElement(driver, PageBaseUI.LINK_HEADER_BY_TEXT, subMenu);
-		getElement(driver, getElement(PageBaseUI.LINK_HEADER_BY_TEXT, subMenu)).click();
+		getElement(driver, getLocatorDynamic(PageBaseUI.LINK_HEADER_BY_TEXT, subMenu)).click();
 	}
 	public void clickToChildSubMenu(WebDriver driver, String childSubMenu) {
 		waitForClickToElement(driver, PageBaseUI.LINK_HEADER_BY_TEXT, childSubMenu);
-		getElement(driver, getElement(PageBaseUI.LINK_HEADER_BY_TEXT, childSubMenu)).click();
+		getElement(driver, getLocatorDynamic(PageBaseUI.LINK_HEADER_BY_TEXT, childSubMenu)).click();
 	}
 	public void senkeyToElement(WebDriver driver, String locator, String textSenkey) {
 		WebElement element = getElement(driver, locator);
@@ -206,44 +213,77 @@ public class PageBase {
 	}
 
 	public void senkeyToElementDynamicByID(WebDriver driver, String textSenkey, String... dynamicLocator) {
-		WebElement element = getElement(driver, getElement(PageBaseUI.TEXTBOX_BY_ID,dynamicLocator));
+		WebElement element = getElement(driver, getLocatorDynamic(PageBaseUI.TEXTBOX_BY_ID,dynamicLocator));
 		element.clear();
-		getElement(driver, getElement(PageBaseUI.TEXTBOX_BY_ID, dynamicLocator)).sendKeys(textSenkey);
+		getElement(driver, getLocatorDynamic(PageBaseUI.TEXTBOX_BY_ID, dynamicLocator)).sendKeys(textSenkey);
 	}
 
 	public String getElementText(WebDriver driver, String locator) {
 		return getElement(driver, locator).getText();
 	}
 	public String getElementTextDynamic(WebDriver driver, String variableLocator, String ...dynamicLocator) {
-		return getElement(driver, getElement(variableLocator, dynamicLocator)).getText().trim();
+		variableLocator=getLocatorDynamic(variableLocator, dynamicLocator);
+		return getElement(driver, variableLocator).getText().trim();
 	}
 	public String getElementAttributeDynamicByValue(WebDriver driver,String nameAttribute, String ...dynamicLocator) {
-		return getElement(driver, getElement(PageBaseUI.TEXTBOX_BY_ID, dynamicLocator)).getAttribute(nameAttribute);
+		return getElement(driver, getLocatorDynamic(PageBaseUI.TEXTBOX_BY_ID, dynamicLocator)).getAttribute(nameAttribute);
 	}
 	public String getElementTextBoxValue(WebDriver driver,String dynamicLocator) {
 		waitForELementVisible(driver, PageBaseUI.TEXTBOX_BY_ID, dynamicLocator);
 		return getElementText(driver, dynamicLocator);
 	}
 	public String getValueInTableAtRowAndColumn(WebDriver driver, String tableId, String columnName, String rowIndex) { 
-		int columnIndex=getElementSizeDynamic(driver, tableId, columnName)+1;
+		int columnIndex=getElementSizeDynamic(driver, PageBaseUI.TABLE_HEADER_BY_ID_AND_ROW, tableId, columnName)+1;
 		System.out.println("INDEX COLUMN:"+columnIndex);
-		waitForELementVisible(driver, PageBaseUI.TABLE_ROW_BY_COLUMNINDEX_AND_ROWINDEX, tableId,rowIndex,String.valueOf(columnIndex));
+		waitForELementVisible(driver, PageBaseUI.TABLE_ROW_BY_COLUMNINDEX_AND_ROWINDEX, tableId,rowIndex,String.valueOf(columnIndex));	
+		System.out.println(getLocatorDynamic(PageBaseUI.TABLE_ROW_BY_COLUMNINDEX_AND_ROWINDEX, tableId,rowIndex,String.valueOf(columnIndex)));
 		return getElementTextDynamic(driver, PageBaseUI.TABLE_ROW_BY_COLUMNINDEX_AND_ROWINDEX, tableId,rowIndex,String.valueOf(columnIndex));
+	}
+	public boolean isSortDescending(WebDriver driver,String tableId, String columnName ) {
+		int columnIndex=getElementSizeDynamic(driver, PageBaseUI.TABLE_HEADER_BY_ID_AND_ROW, tableId, columnName)+1;
+		waitForELementVisible(driver, PageBaseUI.COLUMN_FOR_SORT, String.valueOf(columnIndex));
+		List<WebElement> lastNameElements=getListElementDynamic(driver, PageBaseUI.COLUMN_FOR_SORT, String.valueOf(columnIndex));
+		
+		List<String> lastNameText=new ArrayList<String>();
+		for (WebElement lastNameElement : lastNameElements) {
+			lastNameText.add(lastNameElement.getText());
+		}
+		
+		System.out.println("Before sort Descending");
+		for (String product : lastNameText) {
+			System.out.println(product);
+		}
+		System.out.println("After sort Descending");
+		
+		List<String> lastNameTextClone=new ArrayList<String>();
+		for (String lastname : lastNameText) {
+			lastNameTextClone.add(lastname);
+		}
+		
+		Collections.sort(lastNameTextClone);
+		Collections.reverse(lastNameTextClone);
+		for (String product : lastNameTextClone) {
+			System.out.println(product);
+		}
+		return lastNameTextClone.equals(lastNameText);
 		
 	}
 
+	
 	
 	public void selectItemInDefaultDropdown(WebDriver driver, String locator, String textItem) {
 		Select select = new Select(getElement(driver, locator));
 		select.selectByValue(textItem);
 	}
-	public void selectItemDefaultDropdownDynamic(WebDriver driver,String textItem, String selectID) {
-		waitForClickToElement(driver, getElement(PageBaseUI.DROPDOWNLIST_BY_ID, selectID), textItem);
-		clickToElement(driver, getElement(PageBaseUI.DROPDOWNLIST_BY_ID, selectID));
-		Select select = new Select(getElement(driver, getElement(PageBaseUI.DROPDOWNLIST_BY_ID, selectID)));
-		select.selectByValue(textItem);
+	public void selectItemDefaultDropdownDynamic(WebDriver  driver, String textValue, String ...dynamicLocator ) {
+		Select select = new Select(getElement(driver, getLocatorDynamic(PageBaseUI.DROPDOWNLIST_BY_ID, dynamicLocator)));
+		select.selectByVisibleText(textValue);
 	}
 
+	public void clickDropDownList(WebDriver driver,String selectID) {
+		waitForELementVisible(driver, getLocatorDynamic(PageBaseUI.DROPDOWNLIST_BY_ID, selectID));
+		clickToElement(driver, getLocatorDynamic(PageBaseUI.DROPDOWNLIST_BY_ID, selectID));
+	}
 	public String getSelectedItemInDefaultDropdown(WebDriver driver, String locator) {
 		Select select = new Select(getElement(driver, locator));
 		return select.getFirstSelectedOption().getText();
@@ -276,8 +316,8 @@ public class PageBase {
 			element.click();
 		}
 	}
-	public void CheckBoxDynamicByName(WebDriver driver, String dynamicLocator1, String dynamicLocator2) {
-		WebElement element = getElement(driver,getElement(PageBaseUI.CHECKBOX_BY_NAME, dynamicLocator1, dynamicLocator2));
+	public void CheckBoxDynamicByName(WebDriver driver, String ...dynamicLocator) {
+		WebElement element = getElementDynamic(driver, PageBaseUI.CHECKBOX_BY_NAME, dynamicLocator);
 		if (!element.isSelected()) {
 			element.click();
 		}
@@ -355,8 +395,8 @@ public class PageBase {
 		((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(true);", getElement(driver, locator));
 	}
 	
-	public void scrollToElement(WebDriver driver,String locator, String dynamicLocator) {
-		((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(true);", getElement(driver, getElement(locator, dynamicLocator)));
+	public void scrollToElement(WebDriver driver,String dynamicLocator1, String dynamicLocator2) {
+		((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(true);", getElement(driver,getLocatorDynamic(PageBaseUI.OPTION_OFF_SELECT, dynamicLocator1, dynamicLocator2)));
 	}
 	public void sendkeyToElementByJS(WebDriver driver, String locator, String value) {
 		((JavascriptExecutor) driver).executeScript("arguments[0].setAttribute('value', '" + value + "')",
@@ -422,13 +462,15 @@ public class PageBase {
 		WebDriverWait explicitwait = new WebDriverWait(driver, 30);
 		explicitwait.until(ExpectedConditions.visibilityOfElementLocated(getLocator(locator)));
 	}
-	public void waitForELementVisible(WebDriver driver,String variableLocator, String ...dynamicLocator) {
+	public void waitForELementVisible(WebDriver driver,String variableLocator, String... dynamicLocator) {
 		WebDriverWait explicitwait = new WebDriverWait(driver, 30);
-		explicitwait.until(ExpectedConditions.visibilityOfElementLocated(getLocator(getElement(variableLocator, dynamicLocator))));
+		explicitwait.until(ExpectedConditions.visibilityOfElementLocated(getLocator(getLocatorDynamic(variableLocator, dynamicLocator))));
 	}
+	//nó gọi tơi hàm wait, trong hàm wait cho hàm getLoactorFynamic thì cái này nó lấy động r chứ hạ anh
+	//đâuu phải cái TableID vs ColIDtrueeyeenf vô mà
 	public void waitForELementVisible(WebDriver driver,String variableLocator,String dynamicLocator1 , String dynamicLocator2) {
 		WebDriverWait explicitwait = new WebDriverWait(driver, 30);
-		explicitwait.until(ExpectedConditions.visibilityOfElementLocated(getLocator(getElement(variableLocator, dynamicLocator1,dynamicLocator2))));
+		explicitwait.until(ExpectedConditions.visibilityOfElementLocated(getLocator(getLocatorDynamic(variableLocator, dynamicLocator1,dynamicLocator2))));
 	}
 	public void waitForAllELementVisible(WebDriver driver, String locator) {
 		WebDriverWait explicitwait = new WebDriverWait(driver, 30);
@@ -452,7 +494,7 @@ public class PageBase {
 
 	public void waitForClickToElement(WebDriver driver,String variableLocator, String ...dynamicLocator) {
 		WebDriverWait explicitwait = new WebDriverWait(driver, 30);
-		explicitwait.until(ExpectedConditions.elementToBeClickable(getLocator(getElement(variableLocator, dynamicLocator))));
+		explicitwait.until(ExpectedConditions.elementToBeClickable(getLocator(getLocatorDynamic(variableLocator, dynamicLocator))));
 	}
 	public DashBoardPO LoginToSystem(WebDriver driver,String username,String password) {
 		waitForELementVisible(driver, PageBaseUI.USERNAME_TEXTBOX);

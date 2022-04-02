@@ -1,4 +1,4 @@
-package pageobject;
+package pageobject_hrm;
 
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -29,17 +29,17 @@ public class EmployeeDetailPO extends PageBase {
 	}
 
 	public boolean isEnableTextboxInMyInForPage(WebDriver driver, String dynamicLocator) {	
-		waitForELementVisible(driver, getElement(employeeDetailUI.TEXTBOX_BY_ID, dynamicLocator));	
-		return getElement(driver, getElement(employeeDetailUI.TEXTBOX_BY_ID, dynamicLocator)).isEnabled();	
+		waitForELementVisible(driver, getLocatorDynamic(employeeDetailUI.TEXTBOX_BY_ID, dynamicLocator));	
+		return getElement(driver, getLocatorDynamic(employeeDetailUI.TEXTBOX_BY_ID, dynamicLocator)).isEnabled();	
 	}
 	public void senkeyToElementDynamicByID(WebDriver driver, String textSenkey, String... dynamicLocator) {
-		WebElement element = getElement(driver, getElement(employeeDetailUI.TEXTBOX_BY_ID,dynamicLocator));
+		WebElement element = getElement(driver, getLocatorDynamic(employeeDetailUI.TEXTBOX_BY_ID,dynamicLocator));
 		element.clear();
-		getElement(driver, getElement(employeeDetailUI.TEXTBOX_BY_ID, dynamicLocator)).sendKeys(textSenkey);
+		getElement(driver, getLocatorDynamic(employeeDetailUI.TEXTBOX_BY_ID, dynamicLocator)).sendKeys(textSenkey);
 	}
 	public void clickSideBarInMyInForPageByText(WebDriver driver, String dynamicLocator) {
-		waitForClickToElement(driver, getElement(employeeDetailUI.LINK_SIDEBAR_MYINFOR_BY_TEXT,dynamicLocator ));
-		getElement(driver, getElement(employeeDetailUI.LINK_SIDEBAR_MYINFOR_BY_TEXT,dynamicLocator )).click();
+		waitForClickToElement(driver, getLocatorDynamic(employeeDetailUI.LINK_SIDEBAR_MYINFOR_BY_TEXT,dynamicLocator ));
+		getElement(driver, getLocatorDynamic(employeeDetailUI.LINK_SIDEBAR_MYINFOR_BY_TEXT,dynamicLocator )).click();
 	}
 
 	

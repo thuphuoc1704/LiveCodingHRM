@@ -7,10 +7,10 @@
         <listener class-name="common.MethodListener"/>
 	</listeners>
 	
-   <test name="Run FireFox">
+   <test name="Run chrome">
    	<parameter name="browser" value="chrome"/>
    		<classes>
-      		 <class name="com.hrm.admin.LiveHRM"/>
+      		 <class name="com.nopcommerce.ProductList"/>
     	</classes>
   </test>
 </suite>
