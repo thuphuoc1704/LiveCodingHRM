@@ -12,7 +12,9 @@ import org.openqa.selenium.firefox.FirefoxDriver;
 import org.testng.Assert;
 import org.testng.Reporter;
 
+import com.hrm.pagebaseUI.PageBaseUI;
 import com.hrm.pagebaseUI.PageBaseUI.BROWSERLIST;
+import com.hrm.pagebaseUI.PageBaseUI.ENVIROMENT;
 
 import io.github.bonigarcia.wdm.WebDriverManager;
 import pageobject_hrm.LoginPO;
@@ -51,6 +53,43 @@ public class PageTest {
 			throw new RuntimeException("Browser Name Invalid");
 		}
 		return driver;
+	}
+	
+	protected WebDriver getBrowserDriverAndEnvMutiple(String browserName,String url) {
+		BROWSERLIST browser= BROWSERLIST.valueOf(browserName.toUpperCase());
+		if (browser.equals(BROWSERLIST.CHROME)) {
+			WebDriverManager.chromedriver().setup();
+			driver = new ChromeDriver();
+		} else if (browser.equals(BROWSERLIST.FIREFOX)) {
+			WebDriverManager.firefoxdriver().setup();
+			driver = new FirefoxDriver();
+		} else if (browser.equals(BROWSERLIST.EDGE)) {
+			WebDriverManager.edgedriver().setup();
+			driver = new EdgeDriver();
+		} else if (browser.equals(BROWSERLIST.COCCOC)) {
+			WebDriverManager.chromedriver().driverVersion("97.0.4692").setup();
+			ChromeOptions options = new ChromeOptions();
+			options.setBinary("C:\\Users\\phuoc\\AppData\\Local\\CocCoc\\Browser\\Application\\browser.exe");
+			driver = new ChromeDriver(options);
+		} else {
+			throw new RuntimeException("Browser Name Invalid");
+		}
+		driver.get(getEnv(url));
+		driver.manage().timeouts().implicitlyWait(15, TimeUnit.SECONDS);
+		return driver;
+	}
+	protected String getEnv(String envName) {
+		String url=null;
+		if (envName.equals("dev")) {
+			url=PageBaseUI.URL_DEV;
+		} else if (envName.equals("release")) {
+			url=PageBaseUI.URL_RELEASE;
+		} else if (envName.equals("live")) {
+			url=PageBaseUI.URL_LIVE;
+		} else {
+			throw new RuntimeException("Enviroment Name Invalid");
+		}
+		return url;
 	}
 
 	private boolean checkTrue(boolean condition) {

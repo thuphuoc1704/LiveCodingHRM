@@ -24,8 +24,15 @@ public class PageBaseUI {
 	public static final String COLUMN_FOR_SORT ="xpath=//table[@id='resultTable']//tbody//tr//td[%s]/a";
 	public static final String COLUMN_FOR_SORT1 ="xpath=//table[@id='resultTable']//tbody//tr[%s]//td[4]/a";
 	public static final String ADMIN_MENU ="xpath=//a[@class='firstLevelMenu']/b[text()='Admin']";
+	public static final String URL_DEV ="https://demo.guru99.com/v1/";
+	public static final String URL_RELEASE ="https://demo.guru99.com/v2/";
+	public static final String URL_LIVE ="https://demo.guru99.com/v3/";
+	
 	public enum BROWSERLIST {
 		CHROME, COCCOC, FIREFOX, SAFARI,EDGE;
+	}
+	public enum ENVIROMENT {
+		DEV, RELEASE, LIVE;
 	}
 	
 	
