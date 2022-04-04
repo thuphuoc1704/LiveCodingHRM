@@ -21,7 +21,7 @@ public class ProductList extends PageTest {
 		driver.get(PageBaseUI.URL_NOPCOMMERCE);
 	}
 
-//	@Test
+	@Test
 	public void TC01_SortNameByAscending() {
 		productListPage=GeneratorManager.getProductList(driver);
 		productListPage.selectItemInSort(driver,"Name: A to Z");
@@ -29,7 +29,7 @@ public class ProductList extends PageTest {
 		threadSecond(3);
 	}
 
-//	@Test
+	@Test
 	public void TC02_SortNameByDescending() {
 		productListPage=GeneratorManager.getProductList(driver);
 		productListPage.selectItemInSort(driver,"Name: Z to A");
@@ -41,14 +41,15 @@ public class ProductList extends PageTest {
 	public void TC03_SortPriceByDescending() {
 		productListPage=GeneratorManager.getProductList(driver);
 		productListPage.selectItemInSort(driver,"Price: High to Low");
-		verifyTrue(productListPage.isPriceByDescending());
 		threadSecond(3);
+		verifyTrue(productListPage.isPriceByDescending());
+		
 	}
 
 
 	@AfterClass
 	public void afterClass() {
-//		driver.quit();
+		driver.quit();
 	}
 
 	ProductPO productListPage;

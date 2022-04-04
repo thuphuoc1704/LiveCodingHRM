@@ -2,9 +2,6 @@ package pageobject_nopcommerce;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collector;
-
-import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.Select;
@@ -82,27 +79,49 @@ public class ProductPO extends PageBase {
 		
 		List<Float> productNamePrice=new ArrayList<Float>();
 		for (WebElement productPriceElement : productNamePrices) {
-			productNamePrice.add(Float.parseFloat(productPriceElement.getText().replace("$", "").replace(",", ".")));
+			productNamePrice.add(Float.parseFloat(productPriceElement.getText().substring(1, productPriceElement.getText().length()-3).replace(",", ".")));
 		}
-		//Float.parseFloat(productPriceElement.getText().replace("$", "").trim())
 		System.out.println("Before sort Descending");
 		for (Float product :productNamePrice) {
 			System.out.println(product);
 		}
 		
-		List<Float> productPriceClone=new ArrayList<Float>();
-		for (Float product : productNamePrice) {
-			productPriceClone.add(product);
-		}
-		
 		System.out.println("After sort Descending");
-		Collections.sort(productPriceClone);
-		Collections.reverse(productPriceClone);
+
+		List<Float> productNamePriceClone = new ArrayList<Float>(productNamePrice);
+		Collections.sort(productNamePriceClone);
+		Collections.reverse(productNamePriceClone);
 		
-		for (Float product : productPriceClone) {
+		for (Float product : productNamePriceClone) {
 			System.out.println(product);
 		}
-		return productPriceClone.equals(productNamePrice);
+		return productNamePriceClone.equals(productNamePrice);
 		
+	}
+	
+	public boolean isProductPriceSortDesc() {
+		List<WebElement> productPriceElements = getListElement(driver, ProductPageUI.PRODUCT_PRICE);
+		
+		List<Float> productPriceValue = new ArrayList<Float>();
+		
+		for (WebElement productPrice : productPriceElements) {
+			productPriceValue.add(Float.parseFloat(productPrice.getText().substring(1, productPrice.getText().length()-3).replace(",", ".")));
+		}
+		
+		System.out.println("Before sort desc: -------------------------------------");
+		for(Float productPrice:productPriceValue) {
+			System.out.println(productPrice);
+		}
+		
+		List<Float> productNamePriceClone = new ArrayList<Float>(productPriceValue);
+		Collections.sort(productNamePriceClone);
+		Collections.reverse(productNamePriceClone);
+		
+		System.out.println("After sort desc: -------------------------------------");
+		for(Float productPrice:productNamePriceClone) {
+			System.out.println(productPrice);
+		}
+		
+		return productPriceValue.equals(productNamePriceClone);
 	}
 }

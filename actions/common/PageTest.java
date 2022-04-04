@@ -11,8 +11,10 @@ import org.openqa.selenium.edge.EdgeDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.testng.Assert;
 import org.testng.Reporter;
+
+import com.hrm.pagebaseUI.PageBaseUI.BROWSERLIST;
+
 import io.github.bonigarcia.wdm.WebDriverManager;
-import pageobject_hrm.GeneratorManager;
 import pageobject_hrm.LoginPO;
 
 public class PageTest {
@@ -30,16 +32,17 @@ public class PageTest {
 	String projectPath = System.getProperty("user.dir");
 
 	protected WebDriver getBrowserDriver(String browserName) {
-		if (browserName.equals("chrome")) {
+		BROWSERLIST browser= BROWSERLIST.valueOf(browserName.toUpperCase());
+		if (browser.equals(BROWSERLIST.CHROME)) {
 			WebDriverManager.chromedriver().setup();
 			driver = new ChromeDriver();
-		} else if (browserName.equals("firefox")) {
+		} else if (browser.equals(BROWSERLIST.FIREFOX)) {
 			WebDriverManager.firefoxdriver().setup();
 			driver = new FirefoxDriver();
-		} else if (browserName.equals("edge")) {
+		} else if (browser.equals(BROWSERLIST.EDGE)) {
 			WebDriverManager.edgedriver().setup();
 			driver = new EdgeDriver();
-		} else if (browserName.equals("coccoc")) {
+		} else if (browser.equals(BROWSERLIST.COCCOC)) {
 			WebDriverManager.chromedriver().driverVersion("97.0.4692").setup();
 			ChromeOptions options = new ChromeOptions();
 			options.setBinary("C:\\Users\\phuoc\\AppData\\Local\\CocCoc\\Browser\\Application\\browser.exe");
@@ -120,6 +123,7 @@ public class PageTest {
 		Random random = new Random();
 		return random.nextInt(9999);
 	}
+	
 	public void threadSecond(long second) {
 		try {
 			Thread.sleep(1000 * second);

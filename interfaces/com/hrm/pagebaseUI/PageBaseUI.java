@@ -21,6 +21,12 @@ public class PageBaseUI {
 	public static final String TABLE_ROW_BY_COLUMNINDEX_AND_ROWINDEX = "xpath=//table[@id='%s']/tbody/tr[%s]/td[%s]";
 	public static final String MESSAGE_UPLOAD_SUCCESS="xpath=//div[@class='message success fadable']";
 	public static final String OPTION_OFF_SELECT="xpath=//select[@id='%s']//option[text()='%s']";
-	public static final String COLUMN_FOR_SORT ="xpath=//table[@id='resultTable']//tbody//tr//td[%s]";
-
+	public static final String COLUMN_FOR_SORT ="xpath=//table[@id='resultTable']//tbody//tr//td[%s]/a";
+	public static final String COLUMN_FOR_SORT1 ="xpath=//table[@id='resultTable']//tbody//tr[%s]//td[4]/a";
+	public static final String ADMIN_MENU ="xpath=//a[@class='firstLevelMenu']/b[text()='Admin']";
+	public enum BROWSERLIST {
+		CHROME, COCCOC, FIREFOX, SAFARI,EDGE;
+	}
+	
+	
 }

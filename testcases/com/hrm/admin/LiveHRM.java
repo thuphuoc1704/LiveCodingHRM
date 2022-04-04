@@ -1,8 +1,7 @@
 package com.hrm.admin;
 import org.testng.annotations.Test;
-
-import com.github.javafaker.Faker;
 import com.hrm.pagebaseUI.PageBaseUI;
+import common.DataHelper;
 import common.PageTest;
 import pageobject_hrm.AddEmployeePO;
 import pageobject_hrm.DashBoardPO;
@@ -19,22 +18,20 @@ public class LiveHRM extends PageTest {
 	private WebDriver driver;
 	String avatarFilePath=PageBaseUI.UPLOAD_FOLDER_PATH +"image.jpg";
 	private String username, password,firstName,lastName, passwordEmp,idEmployee, nickName;
-	
 	@Parameters("browser")
 	@BeforeClass
 	public void beforeClass(String browserName) {
-		Faker fakeData= new Faker();
-		firstName=fakeData.address().firstName();
-		lastName=fakeData.address().lastName();
-		passwordEmp=fakeData.internet().password();
-		lastName=fakeData.address().lastName();
-		username = "Admin";
-		password = "admin123";
-	    nickName="pikachu";
 		driver = getBrowserDriver(browserName);
 		maximizeWindown(driver);
 		settimeOutImplicitWait(driver, 30);
 		driver.get(PageBaseUI.URL_HRM);
+		dataHelper=DataHelper.getData();
+		firstName=dataHelper.getFirstName();
+		lastName=dataHelper.getLastName();
+		passwordEmp=dataHelper.getPassWord();
+		username = "Admin";
+		password = "admin123";
+	    nickName="pikachu";
 	}
 
 	@Test
@@ -85,16 +82,16 @@ public class LiveHRM extends PageTest {
 		log.info("AddEmployee_Step13: click button Save");
 		addemployeePage.clickToButtonDynamicByValue(driver, "Save");
 	}
-	@Test
+//	@Test
 	public void TC03_SortLastNameEmployee() {
 		employeeDetailPage=GeneratorManager.getEmployeeDetailPage(driver);
 		employeeDetailPage.clickToMenu(driver,"PIM");
 		employeeDetailPage.clickToSubMenu(driver,"Employee List");
 		employeeListPage=GeneratorManager.getEmployeeListPage(driver);
 		employeeListPage.clickToMenu(driver, "Last Name");
-		threadSecond(3);
+		employeeListPage.clickToMenu(driver, "Last Name");
+		threadSecond(2);
 		verifyTrue(employeeListPage.isSortDescending(driver, "resultTable", "Last Name"));
-		threadSecond(3);
 	}
 	
 //	@Test
@@ -220,7 +217,7 @@ public class LiveHRM extends PageTest {
 	}
 	@AfterClass
 	public void afterClass() {
-//		driver.quit();
+		driver.quit();
 	}
 
 	LoginPO loginPage;
@@ -228,5 +225,6 @@ public class LiveHRM extends PageTest {
 	EmployeeListPO employeeListPage;
 	EmployeeDetailPO employeeDetailPage;
 	AddEmployeePO addemployeePage;
+	DataHelper dataHelper;
 
 }
