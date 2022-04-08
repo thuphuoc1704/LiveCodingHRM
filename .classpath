@@ -54,5 +54,6 @@
 	<classpathentry kind="lib" path="libfaker/generex-1.0.2.jar"/>
 	<classpathentry kind="lib" path="libfaker/javafaker-1.0.1.jar"/>
 	<classpathentry kind="lib" path="libfaker/snakeyaml-1.23.jar"/>
+	<classpathentry kind="lib" path="libraries/jtds-1.3.1.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

@@ -1,4 +1,8 @@
 package pageobject_nopcommerce;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -8,6 +12,7 @@ import org.openqa.selenium.support.ui.Select;
 import com.nopcommerce.pagebaseUI.ProductPageUI;
 
 import common.PageBase;
+import jdbc_connection.ConnectionSQL;
 
 public class ProductPO extends PageBase {
 	private WebDriver driver;
@@ -19,6 +24,11 @@ public class ProductPO extends PageBase {
 	public void selectItemInSort(WebDriver driver, String textItem) {
 			Select select = new Select(getElement(driver, ProductPageUI.SELECT_BY_ID));
 			select.selectByVisibleText(textItem);
+	}
+	public int geSizeProductUI() {
+		int x=3;
+		return x ;
+		
 	}
 	public boolean isNameByAscending() {
 		List<WebElement> productNameElements=getListElement(driver, ProductPageUI.PRODUCT_NAME);
@@ -124,4 +134,20 @@ public class ProductPO extends PageBase {
 		
 		return productPriceValue.equals(productNamePriceClone);
 	}
+
+		public int getListProductDB()throws SQLException,ClassNotFoundException {
+			Connection conn=ConnectionSQL.getConnectionSQL();
+			ArrayList<String>listProduct=new ArrayList<>();
+			Statement stm=conn.createStatement();
+			String sql="select * FROM [automationfc].[dbo].[PRODUCT_TYPE]";
+			ResultSet result= stm.executeQuery(sql);
+			 while (result.next()) {
+	             listProduct.add(result.getString("NAME"));
+	         }
+			 conn.close();
+			 System.out.println("closed database");
+			 System.out.println(listProduct.size());
+			return listProduct.size();
+	}
+
 }

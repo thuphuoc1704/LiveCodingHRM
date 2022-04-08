@@ -6,6 +6,9 @@ import pageobject_nopcommerce.GeneratorManager;
 import pageobject_nopcommerce.ProductPO;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Parameters;
+
+import java.sql.SQLException;
+
 import org.openqa.selenium.WebDriver;
 import org.testng.annotations.AfterClass;
 
@@ -29,7 +32,7 @@ public class ProductList extends PageTest {
 		threadSecond(3);
 	}
 
-	@Test
+//	@Test
 	public void TC02_SortNameByDescending() {
 		productListPage=GeneratorManager.getProductList(driver);
 		productListPage.selectItemInSort(driver,"Name: Z to A");
@@ -37,7 +40,7 @@ public class ProductList extends PageTest {
 		threadSecond(3);
 	}
 	
-	@Test
+//	@Test
 	public void TC03_SortPriceByDescending() {
 		productListPage=GeneratorManager.getProductList(driver);
 		productListPage.selectItemInSort(driver,"Price: High to Low");
@@ -45,7 +48,12 @@ public class ProductList extends PageTest {
 		verifyTrue(productListPage.isPriceByDescending());
 		
 	}
-
+	@Test
+	public void TC04_VerifyDBAndUI() throws ClassNotFoundException, SQLException {
+		productListPage=GeneratorManager.getProductList(driver);
+		verifyEquals(productListPage.geSizeProductUI(), productListPage.getListProductDB());
+		
+	}
 
 	@AfterClass
 	public void afterClass() {
