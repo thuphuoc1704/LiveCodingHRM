@@ -7,11 +7,13 @@
         <listener class-name="common.MethodListener"/>
 	</listeners>
 	
+   <parameter name="browser" value="chrome"/>
    <parameter name="env" value="live"/>
+   <parameter name="ip" value="192.168.2.108"/>
+   <parameter name="port" value="4444"/>
    <test name="Run Chrome">
-   	<parameter name="browser" value="chrome"/>
    		<classes>
-      		 <class name="com.bankguru.MuitipleEnvorment"/>
+      		 <class name="com.bankguru.MultipleEnvorment"/>
     	</classes>
   </test>
 </suite>

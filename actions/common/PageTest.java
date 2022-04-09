@@ -1,14 +1,20 @@
 package common;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.openqa.selenium.Platform;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.edge.EdgeDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.firefox.FirefoxOptions;
+import org.openqa.selenium.remote.DesiredCapabilities;
+import org.openqa.selenium.remote.RemoteWebDriver;
 import org.testng.Assert;
 import org.testng.Reporter;
 
@@ -73,6 +79,43 @@ public class PageTest {
 			driver = new ChromeDriver(options);
 		} else {
 			throw new RuntimeException("Browser Name Invalid");
+		}
+		driver.get(getEnv(url));
+		driver.manage().timeouts().implicitlyWait(15, TimeUnit.SECONDS);
+		return driver;
+	}
+	protected WebDriver getBrowserDriverAndEnvMutiple_Grid(String browserName,String url,String ip,String port) {
+		BROWSERLIST browser= BROWSERLIST.valueOf(browserName.toUpperCase());
+		DesiredCapabilities cap=null;
+		if (browser.equals(BROWSERLIST.CHROME)) {
+			WebDriverManager.chromedriver().setup();
+			cap=DesiredCapabilities.chrome();
+			cap.setBrowserName("chrome");
+			cap.setPlatform(Platform.WINDOWS);
+			ChromeOptions chromeOption= new ChromeOptions();
+			chromeOption.merge(cap);
+		} else if (browser.equals(BROWSERLIST.FIREFOX)) {
+			WebDriverManager.firefoxdriver().setup();
+			cap=DesiredCapabilities.firefox();
+			cap.setBrowserName("firefox");
+			cap.setPlatform(Platform.WINDOWS);
+			FirefoxOptions firefoxOption= new FirefoxOptions();
+			firefoxOption.merge(cap);
+		} else if (browser.equals(BROWSERLIST.EDGE)) {
+			WebDriverManager.edgedriver().setup();
+			driver = new EdgeDriver();
+		} else if (browser.equals(BROWSERLIST.COCCOC)) {
+			WebDriverManager.chromedriver().driverVersion("97.0.4692").setup();
+			ChromeOptions options = new ChromeOptions();
+			options.setBinary("C:\\Users\\phuoc\\AppData\\Local\\CocCoc\\Browser\\Application\\browser.exe");
+			driver = new ChromeDriver(options);
+		} else {
+			throw new RuntimeException("Browser Name Invalid");
+		}
+		try {
+			driver=new RemoteWebDriver(new URL(String.format("http://%s:%s/wd/hub", ip,port)),cap);
+		} catch (MalformedURLException e) {
+			e.printStackTrace();
 		}
 		driver.get(getEnv(url));
 		driver.manage().timeouts().implicitlyWait(15, TimeUnit.SECONDS);
